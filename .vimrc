@@ -1,30 +1,55 @@
-" plugins
+"Usefull shortcuts:
+"v+i+p to visual select paragraph
+"c/C copying, then you can write even in normal mode
+"- open dirvirsh and navigate 
+"CTRL+W+W switch between current windows
+"SHIFT+i in visual mode, you can insert something on multiple lines (e.g.
+"commenting
+
 let need_to_install_plugins = 0
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    "autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
     let need_to_install_plugins = 1
 endif
 
 call plug#begin()
 Plug 'tpope/vim-sensible'
 Plug 'itchyny/lightline.vim'
+Plug 'itchyny/vim-gitbranch'
 Plug 'joshdick/onedark.vim'
 Plug 'ap/vim-buftabline'
 Plug 'airblade/vim-gitgutter'
-Plug 'vim-scripts/The-NERD-tree'
-Plug 'jistr/vim-nerdtree-tabs'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'scrooloose/syntastic'
 Plug 'majutsushi/tagbar'
 Plug 'vim-scripts/indentpython.vim'
-Plug 'lepture/vim-jinja'
-Plug 'pangloss/vim-javascript'
 Plug 'justinmk/vim-dirvish'
-Plug 'thinca/vim-quickrun'
 Plug 'davidhalter/jedi-vim'
+
+Plug 'terryma/vim-multiple-cursors' 
+"CTRL+N in normal mode and then for example c to write to all occurences I
+"insert at start of range, A insert at end of range
 call plug#end()
+
+
+"TODO some plugin for PEP8 formatting overall (I can use cmd utility, but
+"could be fun to have it in vim
+"TODO find good plugin for find and replace (refactor)
+"TODO fzf plugin (find whatever)
+"TODO https://github.com/w0rp/ale
+
+"buftabline
+set hidden
+nnoremap <C-k> :bnext<CR>
+nnoremap <C-l> :bprev<CR>
+"use CTRL-N, CTRL-P to move between buffers, :e to open new buffer, :bw to
+"write and close current buffer, :ls to list buffers, :bd to close without
+"saving
+
+" tag list
+map <leader>t :TagbarToggle<CR>
+"CTRL+T will toggle tagbar, using CTRL+W+W we can switch to tagbar and select
+"part of code
+
 
 filetype plugin indent on
 syntax on
@@ -46,6 +71,7 @@ set t_ut=
 " turn on line numbering
 set number
 
+
 " sane text files
 set fileformat=unix
 set encoding=utf-8
@@ -58,6 +84,9 @@ set softtabstop=4
 set colorcolumn=80
 set expandtab
 set viminfo='25,\"50,n~/.viminfo
+autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType css setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType javascript setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 " word movement
 imap <S-Left> <Esc>bi
@@ -67,8 +96,10 @@ nmap <S-Right> w
 
 " indent/unindent with tab/shift-tab
 nmap <Tab> >>
-imap <S-Tab> <Esc><<i
 nmap <S-tab> <<
+imap <S-Tab> <Esc><<i
+vmap <Tab> >gv
+vmap <S-Tab> <gv
 
 " mouse
 set mouse=a
@@ -94,7 +125,17 @@ filetype plugin indent on
 
 " lightline
 set noshowmode
-let g:lightline = { 'colorscheme': 'onedark' }
+" let g:lightline = { 'colorscheme': 'powerline' }
+let g:lightline = {
+      \ 'colorscheme': 'powerline',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'gitbranch#name'
+      \ },
+      \ }
 
 " code folding
 set foldmethod=indent
@@ -145,19 +186,6 @@ nmap <leader>x :bd<CR>
 
 " restore place in file from previous session
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-
-" syntastic
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
-map <leader>s :SyntasticCheck<CR>
-map <leader>d :SyntasticReset<CR>
-map <leader>e :lnext<CR>
-map <leader>r :lprev<CR>
-
-" tag list
-map <leader>t :TagbarToggle<CR>
 
 " copy, cut and paste
 vmap <C-c> "+y
