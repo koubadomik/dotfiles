@@ -37,6 +37,9 @@ call plug#end()
 "TODO fzf plugin (find whatever)
 "TODO https://github.com/w0rp/ale
 
+"wrap lines
+:set wrap linebreak nolist
+
 "buftabline
 set hidden
 nnoremap <C-k> :bnext<CR>
