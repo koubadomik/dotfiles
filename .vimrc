@@ -6,8 +6,7 @@
 "SHIFT+i in visual mode, you can insert something on multiple lines (e.g.
 "commenting
 
-"Other plugins used:
-" https://github.com/nvie/vim-flake8
+au FileType python setlocal formatprg=autopep8\ -
 
 let need_to_install_plugins = 0
 if empty(glob('~/.vim/autoload/plug.vim'))
