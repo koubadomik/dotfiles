@@ -71,6 +71,7 @@ ZSH_THEME="robbyrussell"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
+    extract
     git
     zsh-syntax-highlighting
     zsh-autosuggestions
@@ -183,3 +184,31 @@ function clm() { awk "{print \$${1:-1}}"; }
 
 # Created by `pipx` on 2021-08-19 10:15:03
 export PATH="$PATH:/Users/koubadom/.local/bin"
+
+
+# By Lukas
+s3cp() {
+  aws s3 cp --sse AES256 "${1}" "${2}" --profile=pdf-experiment
+}
+
+s3sync() {
+  aws s3 sync --sse AES256 "${1}" "${2}" --profile=pdf-experiment
+}
+s3ls() {
+  aws s3 ls "${1}" --profile=pdf-experiment
+}
+
+# note: nested quotes does not work, double-quotes have to be used
+dashForEnd() {
+	$1 | tr "\n" /
+}
+executeAndCopy() {
+	echo `dashForEnd $1`$2 | tr -d "\n" | pbcopy
+}
+echoAndCopy() {
+	echo $1 | tr -d "\n" | pbcopy
+}
+
+alias d='executeAndCopy pwd'
+alias c=echoAndCopy
+alias o='open ./'
