@@ -84,6 +84,8 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
+PROMPT="%(?:%{%}➜ :%{%}➜ ) %{$fg[cyan]%}%5~%{$reset_color%} $(git_prompt_info)"
+
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
