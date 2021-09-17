@@ -76,6 +76,10 @@ plugins=(
     zsh-syntax-highlighting
     zsh-autosuggestions
     k
+    copyfile
+    web-search
+    copybuffer
+    zsh-fzf-history-search
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -148,6 +152,8 @@ alias diff='colordiff'
 alias path='echo -e ${PATH//:/\\n}'
 alias confl='git diff --name-only --diff-filter=U'
 
+alias blib='cd ~/Projects/bp-forjerry/lib/bp-forjerry'
+
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/Users/koubadom/miniforge3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
@@ -166,7 +172,7 @@ unset __conda_setup
 
 #Functions
 function maws (){
-    aws s3 ls --human-readable s3://$1 --profile experiment-pdf
+    aws s3 ls --human-readable s3://$1 
 }
 
 function inspdf(){
@@ -182,20 +188,33 @@ function sso () {
 
 function clm() { awk "{print \$${1:-1}}"; }
 
+function cpclip() {
+    cat $1 | pbcopy
+}
+
+function cpclipjs() {
+    cat $1 | jq | pbcopy
+}
+
+function authaws() {
+    . ~/Projects/scripts/awspypi.sh
+    sso experiment-pdf
+}
+
 # Created by `pipx` on 2021-08-19 10:15:03
 export PATH="$PATH:/Users/koubadom/.local/bin"
 
 
 # By Lukas
 s3cp() {
-  aws s3 cp --sse AES256 "${1}" "${2}" --profile=pdf-experiment
+  aws s3 cp --sse AES256 "${1}" "${2}"
 }
 
 s3sync() {
-  aws s3 sync --sse AES256 "${1}" "${2}" --profile=pdf-experiment
+  aws s3 sync --sse AES256 "${1}" "${2}"
 }
 s3ls() {
-  aws s3 ls "${1}" --profile=pdf-experiment
+  aws s3 ls "${1}"
 }
 
 # note: nested quotes does not work, double-quotes have to be used
@@ -212,3 +231,7 @@ echoAndCopy() {
 alias d='executeAndCopy pwd'
 alias c=echoAndCopy
 alias o='open ./'
+alias ct='cpclip'
+alias ctj='cpclipjs'
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
