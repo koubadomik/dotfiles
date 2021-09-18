@@ -28,9 +28,12 @@ plugins=(
     web-search
     copybuffer
     zsh-fzf-history-search
+    vi-mode
 )
+
 source $ZSH/oh-my-zsh.sh
 PROMPT="%(?:%{%}➜ :%{%}➜ ) %{$fg[cyan]%}%5~%{$reset_color%} $(git_prompt_info)"
+VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 
 # User configuration
 export MANPATH="/usr/local/man:$MANPATH"
