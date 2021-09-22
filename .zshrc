@@ -3,7 +3,7 @@
 
 # Path to your oh-my-zsh installation.
 export ZSH="/Users/koubadom/.oh-my-zsh"
-ZSH_THEME="robbyrussell"
+ZSH_THEME="gnzh"
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 # CASE_SENSITIVE="true"
 # HYPHEN_INSENSITIVE="true"
@@ -32,7 +32,7 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
-PROMPT="%(?:%{%}➜ :%{%}➜ ) %{$fg[cyan]%}%5~%{$reset_color%} $(git_prompt_info)"
+#PROMPT="%(?:%{%}➜ :%{%}➜ ) %{$fg[cyan]%}%d%{$reset_color%} $(git_prompt_info)"
 VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 
 # User configuration
@@ -86,8 +86,8 @@ function cpclipjs() {
 }
 
 function authaws() {
-    . ~/Projects/scripts/awspypi.sh
     sso experiment-pdf
+    . ~/Projects/scripts/awspypi.sh
 }
 
 s3cp() {
