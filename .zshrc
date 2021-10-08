@@ -29,6 +29,8 @@ plugins=(
     copybuffer
     zsh-fzf-history-search
     vi-mode
+    docker 
+    docker-compose
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -85,10 +87,24 @@ function cpclipjs() {
     cat $1 | jq | pbcopy
 }
 
-function authaws() {
-    sso experiment-pdf
-    . ~/Projects/scripts/awspypi.sh
+function download_data_set(){
+    IFS=$'\n' read -d '' -A arr2 < <(cat "${1}"| jq ".input_file")
+    p="/Users/koubadom/data/resistant/files/${1}/"
+    echo $arr[1]
+    echo $p
+    mkdir "${p}"
+    for i in "${arr2[@]}"
+    do
+        if [ -n "$i" ]; then
+            temp="${i%\"}"
+            temp="${temp#\"}"
+            #echo "s3://${temp}" "${p}"
+            s3cp "s3://${temp}" "${p}"
+        fi
+    done
 }
+
+
 
 s3cp() {
   aws s3 cp --sse AES256 "${1}" "${2}"
@@ -137,6 +153,7 @@ alias c=echoAndCopy
 alias o='open ./'
 alias ct='cpclip'
 alias ctj='cpclipjs'
+alias gst='gss'
 
 
 # >>> conda initialize >>>
