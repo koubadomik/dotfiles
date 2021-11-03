@@ -55,7 +55,7 @@ autoload -U compinit && compinit
 export OPENBLAS=$(/opt/homebrew/bin/brew --prefix openblas)
 export CFLAGS="-falign-functions=8 ${CFLAGS}"
 export ARROW_HOME=$(brew --prefix apache-arrow)
-export LLVM_CONFIG=/opt/homebrew/Cellar/llvm@11/11.1.0_2/bin/llvm-config
+export LLVM_CONFIG=/opt/homebrew/Cellar/llvm@11/11.1.0_3/bin/llvm-config
 export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_INSECURE_REDIREC=1
 export HOMEBREW_CASK_OPTS=--require-sha
@@ -104,7 +104,10 @@ function download_data_set(){
     done
 }
 
-
+function sync_pipeline(){
+    s3sync s3://bp-pdf-experiment/datasets/dataset_$1/$2/img/assembly/ ~/data/resistant/pipeline/$1/$2/img/assembly/
+    s3sync s3://bp-pdf-experiment/datasets/dataset_$1/$2/pdf/assembly/ ~/data/resistant/pipeline/$1/$2/pdf/assembly/
+}
 
 s3cp() {
   aws s3 cp --sse AES256 "${1}" "${2}"
