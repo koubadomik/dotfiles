@@ -61,6 +61,18 @@ export HOMEBREW_NO_INSECURE_REDIREC=1
 export HOMEBREW_CASK_OPTS=--require-sha
 export PATH="$PATH:/Users/koubadom/.local/bin" #pipx
 
+#temp
+export PATH="/opt/homebrew/opt/openssl@1.1/bin:/opt/homebrew/Cellar/llvm@11/11.1.0_3/bin:/opt/homebrew/bin:${PATH}"
+#export PATH="/opt/homebrew/opt/openssl@1.1/bin:/opt/homebrew/bin:${PATH}"
+export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
+export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
+export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
+export OPENBLAS=$(/opt/homebrew/bin/brew --prefix openblas)
+export CFLAGS="-falign-functions=8 ${CFLAGS}"
+
+
 #Functions
 function maws (){
     aws s3 ls --human-readable s3://$1 
@@ -116,6 +128,7 @@ s3cp() {
 s3sync() {
   aws s3 sync --sse AES256 "${1}" "${2}"
 }
+
 s3ls() {
   aws s3 ls "${1}"
 }
