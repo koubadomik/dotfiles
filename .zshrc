@@ -19,6 +19,7 @@ ZSH_THEME="gnzh"
 # HIST_STAMPS="mm/dd/yyyy"
 # ZSH_CUSTOM=/path/to/new-custom-folder
 plugins=(
+    poetry
     extract
     git
     zsh-syntax-highlighting
@@ -28,14 +29,12 @@ plugins=(
     web-search
     copybuffer
     zsh-fzf-history-search
-    vi-mode
     docker 
     docker-compose
 )
 
 source $ZSH/oh-my-zsh.sh
 #PROMPT="%(?:%{%}➜ :%{%}➜ ) %{$fg[cyan]%}%d%{$reset_color%} $(git_prompt_info)"
-VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
 
 # User configuration
 export MANPATH="/usr/local/man:$MANPATH"
@@ -49,28 +48,31 @@ else
 fi
 
 PATH=$PATH:/usr/local/bin
-export PATH="$HOME/.poetry/bin:$PATH"
+export PATH="$PATH:/Users/koubadom/.local/bin" #pipx
+
 fpath=(~/.zsh/completions $fpath)
 autoload -U compinit && compinit
-export OPENBLAS=$(/opt/homebrew/bin/brew --prefix openblas)
-export CFLAGS="-falign-functions=8 ${CFLAGS}"
-export ARROW_HOME=$(brew --prefix apache-arrow)
-export LLVM_CONFIG=/opt/homebrew/Cellar/llvm@11/11.1.0_3/bin/llvm-config
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+if which pyenv-virtualenv-init > /dev/null; then eval "$(pyenv virtualenv-init -)"; fi
+
 export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_INSECURE_REDIREC=1
 export HOMEBREW_CASK_OPTS=--require-sha
-export PATH="$PATH:/Users/koubadom/.local/bin" #pipx
 
-#temp
-export PATH="/opt/homebrew/opt/openssl@1.1/bin:/opt/homebrew/Cellar/llvm@11/11.1.0_3/bin:/opt/homebrew/bin:${PATH}"
-#export PATH="/opt/homebrew/opt/openssl@1.1/bin:/opt/homebrew/bin:${PATH}"
-export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib"
+export OPENBLAS=$(/opt/homebrew/bin/brew --prefix openblas)
+export ARROW_HOME=$(brew --prefix apache-arrow)
+export LLVM_CONFIG="$(brew --prefix llvm@11)/bin/llvm-config" 
+export PATH="/opt/homebrew/opt/openssl@1.1/bin:${LLVM_CONFIG}:/opt/homebrew/bin:${PATH}"
+export CFLAGS="-I$(brew --prefix openssl@1.1)/include"
+export CFLAGS="-falign-functions=8 ${CFLAGS}"
+export LDFLAGS="-L$(brew --prefix openssl@1.1)/lib" 
 export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
 export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
 export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
 export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
-export OPENBLAS=$(/opt/homebrew/bin/brew --prefix openblas)
-export CFLAGS="-falign-functions=8 ${CFLAGS}"
 
 
 #Functions
@@ -99,6 +101,16 @@ function cpclipjs() {
     cat $1 | jq | pbcopy
 }
 
+function sample_dataset(){
+    sso experiment-pdf
+    TENANT_PREFIX="$1"
+    START_DAY="$2"
+    END_DATE="$3"
+    DATASET_NAME="dataset"
+    OUTPUT_DIR=/Users/koubadom/data/resistant/datasets
+    poetry run /Users/koubadom/Projects/bp-forjerry/projects/bp-forjerry/training/dataset_builder --start_date=${START_DAY} --dataset_name=${DATASET_NAME} --output_dir=${OUTPUT_DIR} --end_date=${END_DATE} --data_prefix="${TYPE}/${TENANT_PREFIX}"
+}
+
 function download_data_set(){
     IFS=$'\n' read -d '' -A arr2 < <(cat "${1}"| jq ".input_file")
     p="/Users/koubadom/data/resistant/files/${1}/"
@@ -120,6 +132,23 @@ function sync_pipeline(){
     s3sync s3://bp-pdf-experiment/datasets/dataset_$1/$2/img/assembly/ ~/data/resistant/pipeline/$1/$2/img/assembly/
     s3sync s3://bp-pdf-experiment/datasets/dataset_$1/$2/pdf/assembly/ ~/data/resistant/pipeline/$1/$2/pdf/assembly/
 }
+
+
+function check_data_set(){
+    IFS=$'\n' read -d '' -A arr2 < <(cat "${1}"| jq ".input_file")
+    k=0
+    for i in "${arr2[@]}"
+    do
+        if [ -n "$i" ]; then
+            ((k=k+1)) 
+           temp="${i%\"}"
+           temp="${temp#\"}"
+           echo -ne "${k}/${#arr2[@]}\r"
+           s3ls "s3://${temp}" > /dev/null || echo "Not found ${temp}"
+        fi
+    done
+}
+
 
 s3cp() {
   aws s3 cp --sse AES256 "${1}" "${2}"
@@ -170,22 +199,6 @@ alias o='open ./'
 alias ct='cpclip'
 alias ctj='cpclipjs'
 alias gst='gss'
-
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/koubadom/miniforge3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/koubadom/miniforge3/etc/profile.d/conda.sh" ]; then
-        . "/Users/koubadom/miniforge3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/koubadom/miniforge3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
 
 
 
