@@ -73,7 +73,13 @@ export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include"
 export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
 export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
 export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
+export PATH="/Users/koubadom/Projects/bp-forjerry/tools/data-manipulation/cli-tools:${PATH}"
 
+#Temp
+
+function jul (){
+    aws s3 cp s3://bp-pdf-forjerry-storage-forjerry-prod/data_image/25bLcxpK5i5BVS8hLXuG56CNkwu/$(pbpaste) ~/data/resistant/data/cards
+}
 
 #Functions
 function maws (){
@@ -113,7 +119,7 @@ function sample_dataset(){
 
 function download_data_set(){
     IFS=$'\n' read -d '' -A arr2 < <(cat "${1}"| jq ".input_file")
-    p="/Users/koubadom/data/resistant/files/${1}/"
+    p="/Users/koubadom/data/resistant/data/files/${1}/"
     echo $arr[1]
     echo $p
     mkdir "${p}"
@@ -122,8 +128,8 @@ function download_data_set(){
         if [ -n "$i" ]; then
             temp="${i%\"}"
             temp="${temp#\"}"
-            #echo "s3://${temp}" "${p}"
-            s3cp "s3://${temp}" "${p}"
+            echo "s3://${temp}" "${p}"
+            # s3cp "s3://${temp}" "${p}"
         fi
     done
 }
