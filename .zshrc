@@ -49,6 +49,8 @@ fi
 
 PATH=$PATH:/usr/local/bin
 export PATH="$PATH:/Users/koubadom/.local/bin" #pipx
+export PATH="$PATH:/Users/koubadom/.npm_local/bin/" #npx, npm
+
 
 fpath=(~/.zsh/completions $fpath)
 autoload -U compinit && compinit
@@ -75,13 +77,14 @@ export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
 export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
 export PATH="/Users/koubadom/Projects/bp-forjerry/tools/data-manipulation/cli-tools:${PATH}"
 
-#Temp
-
-function jul (){
-    aws s3 cp s3://bp-pdf-forjerry-storage-forjerry-prod/data_image/25bLcxpK5i5BVS8hLXuG56CNkwu/$(pbpaste) ~/data/resistant/data/cards
+#Functions
+assume_role(){
+    echo "Assuming IAM role: '${1}' with session name '${2}'"
+    KST=($(aws sts assume-role --role-arn ${1} --role-session-name ${2} --query '[Credentials.AccessKeyId,Credentials.SecretAccessKey,Credentials.SessionToken]' --output text))
+    unset AWS_SECURITY_TOKEN
+    export AWS_ACCESS_KEY_ID=${KST[1]} AWS_SECRET_ACCESS_KEY=${KST[2]} AWS_SESSION_TOKEN=${KST[3]}
 }
 
-#Functions
 function maws (){
     aws s3 ls --human-readable s3://$1 
 }
@@ -128,8 +131,8 @@ function download_data_set(){
         if [ -n "$i" ]; then
             temp="${i%\"}"
             temp="${temp#\"}"
-            echo "s3://${temp}" "${p}"
-            # s3cp "s3://${temp}" "${p}"
+            # echo "s3://${temp}" "${p}"
+            s3cp "s3://${temp}" "${p}"
         fi
     done
 }
@@ -179,9 +182,16 @@ echoAndCopy() {
 	echo $1 | tr -d "\n" | pbcopy
 }
 
+com() {
+    git commit -m "#$(git rev-parse --abbrev-ref HEAD | cut -d"-" -f1): $1"
+}
+
 
 
 #Aliases
+alias b="/Users/koubadom/Library/Caches/pypoetry/virtualenvs/bible-scraper-gzNJyYRW-py3.10/bin/python ~/Projects/bible-scraper/scraper.py verse --path ~/Projects/bible-scraper/bible/books.json"
+alias lb="/Users/koubadom/Library/Caches/pypoetry/virtualenvs/bible-scraper-gzNJyYRW-py3.10/bin/python ~/Projects/bible-scraper/scraper.py ls --path ~/Projects/bible-scraper/bible/books.json"
+alias sb="/Users/koubadom/Library/Caches/pypoetry/virtualenvs/bible-scraper-gzNJyYRW-py3.10/bin/python ~/Projects/bible-scraper/scraper.py search --path ~/Projects/bible-scraper/bible/books.json"
 alias ros="arch -x86_64"
 alias arm="arch -arm64e"
 alias brewi='arch -x86_64 /usr/local/bin/brew'
@@ -209,3 +219,4 @@ alias gst='gss'
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
