@@ -189,7 +189,8 @@ com() {
 
 mr() {
     git fetch
-    git checkout $(git branch -a | grep $1 | rev | cut -d/ -f1 | rev)
+    git checkout $(git branch -a | grep $1 | rev | cut -d/ -f1 | rev | head -n 1)
+
 }
 
 
