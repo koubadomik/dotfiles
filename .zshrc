@@ -76,6 +76,7 @@ export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig"
 export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
 export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
 export PATH="/Users/koubadom/Projects/bp-forjerry/tools/data-manipulation/cli-tools:${PATH}"
+export PATH="$HOME/.tfenv/bin:$PATH"
 
 #Functions
 assume_role(){
@@ -186,6 +187,10 @@ com() {
     git commit -m "#$(git rev-parse --abbrev-ref HEAD | cut -d"-" -f1): $1"
 }
 
+mr() {
+    git fetch
+    git checkout $(git branch -a | grep $1 | rev | cut -d/ -f1 | rev)
+}
 
 
 #Aliases
@@ -220,3 +225,9 @@ alias gst='gss'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/koubadom/Projects/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/koubadom/Projects/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/koubadom/Projects/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/koubadom/Projects/google-cloud-sdk/completion.zsh.inc'; fi
