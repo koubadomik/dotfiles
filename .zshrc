@@ -31,6 +31,7 @@ plugins=(
     zsh-fzf-history-search
     docker 
     docker-compose
+    aws
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -190,14 +191,24 @@ com() {
 mr() {
     git fetch
     git checkout $(git branch -a | grep $1 | rev | cut -d/ -f1 | rev | head -n 1)
-
 }
+
+aws_prompt_info () {
+        [[ -n "$PROFILE_AWS" ]] || return
+        echo "%F{cyan}${ZSH_THEME_AWS_PREFIX=<}${PROFILE_AWS:gs/%/%%}${ZSH_THEME_AWS_SUFFIX=>}%f"
+}
+
+
+
 
 
 #Aliases
 alias b="/Users/koubadom/Library/Caches/pypoetry/virtualenvs/bible-scraper-gzNJyYRW-py3.10/bin/python ~/Projects/bible-scraper/scraper.py verse --path ~/Projects/bible-scraper/bible/books.json"
+alias bb="/Users/koubadom/Library/Caches/pypoetry/virtualenvs/bible-scraper-gzNJyYRW-py3.10/bin/python ~/Projects/bible-scraper/scraper.py verse --path ~/Projects/bible-scraper/bible/books.json --path ~/Projects/bible-scraper/bible/books_en.json"
+alias eb="/Users/koubadom/Library/Caches/pypoetry/virtualenvs/bible-scraper-gzNJyYRW-py3.10/bin/python ~/Projects/bible-scraper/scraper.py verse --path ~/Projects/bible-scraper/bible/books_en.json"
 alias lb="/Users/koubadom/Library/Caches/pypoetry/virtualenvs/bible-scraper-gzNJyYRW-py3.10/bin/python ~/Projects/bible-scraper/scraper.py ls --path ~/Projects/bible-scraper/bible/books.json"
-alias sb="/Users/koubadom/Library/Caches/pypoetry/virtualenvs/bible-scraper-gzNJyYRW-py3.10/bin/python ~/Projects/bible-scraper/scraper.py search --path ~/Projects/bible-scraper/bible/books.json"
+alias sb="/Users/koubadom/Library/Caches/pypoetry/virtualenvs/bible-scraper-gzNJyYRW-py3.10/bin/python ~/Projects/bible-scraper/scraper.py search --path ~/Projects/bible-scraper/bible/books.json --path ~/Projects/bible-scraper/bible/books_en.json"
+alias esb="/Users/koubadom/Library/Caches/pypoetry/virtualenvs/bible-scraper-gzNJyYRW-py3.10/bin/python ~/Projects/bible-scraper/scraper.py search --path ~/Projects/bible-scraper/bible/books_en.json"
 alias ros="arch -x86_64"
 alias arm="arch -arm64e"
 alias brewi='arch -x86_64 /usr/local/bin/brew'
@@ -221,8 +232,7 @@ alias o='open ./'
 alias ct='cpclip'
 alias ctj='cpclipjs'
 alias gst='gss'
-
-
+alias pypi='/Users/koubadom/.local/bin/poetry config http-basic.aws_pypi aws $(/opt/homebrew/bin/aws codeartifact get-authorization-token --domain resistant-artifacts --domain-owner 287077457002 --query authorizationToken --output text --profile bulletproof-prod.PypiReadOnly --region eu-west-1)'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
